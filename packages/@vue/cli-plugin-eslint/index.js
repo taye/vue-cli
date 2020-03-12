@@ -41,7 +41,11 @@ module.exports = (api, options) => {
             .add(/node_modules/)
             .add(path.dirname(require.resolve('@vue/cli-service')))
             .end()
-          .test(/\.(vue|(j|t)sx?)$/)
+          .test(filename => {
+            return && /\.(js|vue)$/.test(filename)
+              // ignore imported files that are outside the current vue project
+              path.normalize(filename).startsWith(cwd)
+          })
           .use('eslint-loader')
             .loader(require.resolve('eslint-loader'))
             .options({
